@@ -1,0 +1,6 @@
+def build_trigrams(cyphertext):
+    trigrams = list(ngrams(cyphertext, 3))
+    grouped_trigrams = []
+    for trigram in trigrams:
+        grouped_trigrams.append(''.join(trigram))
+    return grouped_trigrams

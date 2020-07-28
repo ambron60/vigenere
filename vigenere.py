@@ -6,14 +6,6 @@ from statistics import mean
 iocs = {}  # global index of coincidences dict (period, avg)
 
 
-def build_trigrams(cyphertext):
-    trigrams = list(ngrams(cyphertext, 3))
-    grouped_trigrams = []
-    for trigram in trigrams:
-        grouped_trigrams.append(''.join(trigram))
-    return grouped_trigrams
-
-
 def count_frequency(sequence):
     frequency_counts = {}
     for item in sequence:
