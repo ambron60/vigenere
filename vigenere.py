@@ -5,6 +5,8 @@ from statistics import mean
 
 iocs = {}  # global index of coincidences dict (period, avg)
 sequences = {}  # global storage of periods and corresponding sequences
+deciphered = []  # global storage of min chi-sq values corresponding indices
+
 english_letters_index = {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5, 'G': 6, 'H': 7, 
                         'I': 8, 'J': 9, 'K': 10, 'L': 11, 'M': 12, 'N': 13, 'O': 14, 'P': 15,
                         'Q': 16, 'R': 17, 'S': 18, 'T': 19, 'U': 20, 'V': 21, 'W': 22, 'X': 23,
@@ -14,6 +16,7 @@ english_letters_freq = {'A': 0.082, 'B': 0.015, 'C': 0.028, 'D': 0.043, 'E': 0.1
                         'M': 0.024, 'N': 0.067, 'O': 0.075, 'P': 0.019, 'Q': 0.001, 'R': 0.060,
                         'S': 0.063, 'T': 0.091, 'U': 0.028, 'V': 0.010, 'W': 0.023, 'X': 0.001,
                         'Y': 0.020, 'Z': 0.001}
+reversed_index = {v: k for k, v in english_letters_index.items()}
 
 
 def chi_squared(sequence):
@@ -42,6 +45,13 @@ def count_frequency(sequence):
     return frequency_counts
 
 
+def decipher_key(indices):
+    key = []
+    for index in indices:
+        key.append(reversed_index[index])
+    return key
+
+
 def ic(sequence):
     denominator, numerator = 0.0, 0.0
     for val in count_frequency(sequence).values():
@@ -52,6 +62,16 @@ def ic(sequence):
         return 0.0
     else:
         return numerator / ( denominator * (denominator - 1))
+
+
+def iocs_chart():
+    # Print bar plot with avg iocs
+    plt.bar(iocs.keys(), iocs.values(), color='gray')
+    plt.xticks(range(2, 16))
+    plt.xlabel('Period/Key Size')
+    plt.ylabel('IOC Average')
+    plt.title('Vigenere Cipher - Period (Key Size) Approximation')
+    plt.show()
 
 
 def period_finder(original):
@@ -68,28 +88,29 @@ def period_finder(original):
         period_sequences.clear()
     return
 
-def iocs_table():
-    print("\n{:<8} {:<15}".format('Period','AVG IoC'))
-    print("{:<8} {:<15}".format('--------','---------------'))
-    for k, v in iocs.items():
-        period, avg = k, v
-        print("{:<8} {:<15}".format(period, avg))
 
-
-def iocs_chart():
-    # Print bar plot with avg iocs
-    plt.bar(iocs.keys(), iocs.values(), color='gray')
-    plt.xticks(range(2, 16))
-    plt.xlabel('Period/Key Size')
-    plt.ylabel('IOC Average')
-    plt.title('Vigenere Cipher - Period (Key Size) Approximation')
-    plt.show()
+def sequence_shifter(sequence):
+    chi_stats = {}
+    subsequence = []
+    for i in range(26):
+        chi_stats[i] = chi_squared(sequence)
+        for letter in sequence:
+            l_index = english_letters_index[letter]
+            if l_index is 0:
+                subsequence.append('Z')
+            else:
+                subsequence.append(reversed_index[l_index-1])
+        sequence = ''.join(subsequence)
+        subsequence.clear()
+        if i == 25:
+            min_chi = min(chi_stats.keys(), key=(lambda k: chi_stats[k]))
+            deciphered.append(min_chi)
+    return
 
 
 def main():
     with open('cyphertext.txt') as ct:
         cyphertext = ct.read()
-
     print(f'\nCyphertext is {len(cyphertext)} characters long -> {sys.getsizeof(cyphertext)} bytes\n' )
     cyphertext = ''.join(filter(str.isalpha, cyphertext.upper()))
     period_finder(cyphertext)
@@ -97,14 +118,10 @@ def main():
 
     # Select and print a period (key length) number
     key_size = int(input("Enter the desired period (key size): "))
-    print()
     for sequence in sequences[key_size]:
-        print(sequence, chi_squared(sequence))  # print all sequences shifted by key size or period number
-        #print(count_frequency(sequence))  # print letter frequencies
-        
-        # Find letter with highest frequency in current sequence
-        #highest_freq_letter = max(count_frequency(sequence), key=count_frequency(sequence).get)
-        #print(highest_freq_letter)
+        sequence_shifter(sequence)
+    
+    print(f'\nPossible KEY: {"".join(decipher_key(deciphered))}')  # print possible key
 
 
 main()

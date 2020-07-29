@@ -4,3 +4,13 @@ def build_trigrams(cyphertext):
     for trigram in trigrams:
         grouped_trigrams.append(''.join(trigram))
     return grouped_trigrams
+
+
+def iocs_table():
+    print("\n{:<8} {:<15}".format('Period','AVG IoC'))
+    print("{:<8} {:<15}".format('--------','---------------'))
+    for k, v in iocs.items():
+        period, avg = k, v
+        print("{:<8} {:<15}".format(period, avg))
+
+
