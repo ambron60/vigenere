@@ -16,7 +16,7 @@ english_letters_freq = {'A': 0.082, 'B': 0.015, 'C': 0.028, 'D': 0.043, 'E': 0.1
                         'M': 0.024, 'N': 0.067, 'O': 0.075, 'P': 0.019, 'Q': 0.001, 'R': 0.060,
                         'S': 0.063, 'T': 0.091, 'U': 0.028, 'V': 0.010, 'W': 0.023, 'X': 0.001,
                         'Y': 0.020, 'Z': 0.001}
-reversed_index = {v: k for k, v in english_letters_index.items()}
+reversed_index = {v: k for k, v in english_letters_index.items()}  # reversed English letters index
 
 
 def chi_squared(sequence):
@@ -54,7 +54,7 @@ def decipher_key(indices):
 
 def ic(sequence):
     denominator, numerator = 0.0, 0.0
-    for val in count_frequency(sequence).values():
+    for val in count_frequency(sequence).values(): 
         i = val
         numerator += i * (i - 1)
         denominator += i
@@ -64,10 +64,10 @@ def ic(sequence):
         return numerator / ( denominator * (denominator - 1))
 
 
-def iocs_chart():
+def iocs_plot():
     # Print bar plot with avg iocs
     plt.bar(iocs.keys(), iocs.values(), color='gray')
-    plt.xticks(range(2, 16))
+    plt.xticks(range(2, 31))
     plt.xlabel('Period/Key Size')
     plt.ylabel('IOC Average')
     plt.title('Vigenere Cipher - Period (Key Size) Approximation')
@@ -77,7 +77,7 @@ def iocs_chart():
 def period_finder(original):
     ics = []  # list of indices of coincidence to calculate averages
     period_sequences = []  # temporary storage list for every sequence under each key length
-    for i in range(2, 16):  # periods less than 2 and greater than 15 are not allowed
+    for i in range(2, 31):  # periods (key size) must be between 2 and 30
         for j in range(i):
             cyphertext = original[j:]
             ics.append(ic(cyphertext[::i]))
@@ -114,7 +114,7 @@ def main():
     print(f'\nCyphertext is {len(cyphertext)} characters long -> {sys.getsizeof(cyphertext)} bytes\n' )
     cyphertext = ''.join(filter(str.isalpha, cyphertext.upper()))
     period_finder(cyphertext)
-    iocs_chart()
+    iocs_plot()
 
     # Select and print a period (key length) number
     key_size = int(input("Enter the desired period (key size): "))
