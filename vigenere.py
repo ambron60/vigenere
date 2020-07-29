@@ -67,7 +67,7 @@ def ic(sequence):
 def iocs_plot():
     # Print bar plot with avg iocs
     plt.bar(iocs.keys(), iocs.values(), color='gray')
-    plt.xticks(range(2, 31))
+    plt.xticks(range(1, 31))
     plt.xlabel('Period/Key Size')
     plt.ylabel('IOC Average')
     plt.title('Vigenere Cipher - Period (Key Size) Approximation')
@@ -77,7 +77,7 @@ def iocs_plot():
 def period_finder(original):
     ics = []  # list of indices of coincidence to calculate averages
     period_sequences = []  # temporary storage list for every sequence under each key length
-    for i in range(2, 31):  # periods (key size) must be between 2 and 30
+    for i in range(1, 31):  # periods (key size) must be between 1 and 30
         for j in range(i):
             cyphertext = original[j:]
             ics.append(ic(cyphertext[::i]))
