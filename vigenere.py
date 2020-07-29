@@ -120,7 +120,6 @@ def main():
     key_size = int(input("Enter the desired period (key size): "))
     for sequence in sequences[key_size]:
         sequence_shifter(sequence)
-    
     print(f'\nPossible KEY: {"".join(decipher_key(deciphered))}')  # print possible key
 
 
