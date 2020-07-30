@@ -69,19 +69,19 @@ def iocs_plot():
     plt.bar(iocs.keys(), iocs.values(), color='gray')
     plt.xticks(range(1, 31))
     plt.xlabel('Period/Key Size')
-    plt.ylabel('IOC Average')
+    plt.ylabel('IoC Average')
     plt.title('Vigenere Cipher - Period (Key Size) Approximation')
     plt.show()
 
 
-def period_finder(original):
+def period_finder(cipher):
     ics = []  # list of indices of coincidence to calculate averages
     period_sequences = []  # temporary storage list for every sequence under each key length
     for i in range(1, 31):  # periods (key size) must be between 1 and 30
         for j in range(i):
-            cyphertext = original[j:]
-            ics.append(ic(cyphertext[::i]))
-            period_sequences.append(cyphertext[::i])
+            ciphertext = cipher[j:]
+            ics.append(ic(ciphertext[::i]))
+            period_sequences.append(ciphertext[::i])
         iocs.update( {i : round(mean(ics), 13)} )  # append iocs avg to global ioc dict
         ics.clear()
         sequences[i] = [sequence for sequence in period_sequences]
@@ -109,11 +109,11 @@ def sequence_shifter(sequence):
 
 
 def main():
-    with open('cyphertext.txt') as ct:
-        cyphertext = ct.read()
-    print(f'\nCyphertext is {len(cyphertext)} characters long -> {sys.getsizeof(cyphertext)} bytes\n' )
-    cyphertext = ''.join(filter(str.isalpha, cyphertext.upper()))
-    period_finder(cyphertext)
+    with open('ciphertext.txt') as ct:
+        ciphertext = ct.read()
+    print(f'\nciphertext is {len(ciphertext)} characters long -> {sys.getsizeof(ciphertext)} bytes\n' )
+    ciphertext = ''.join(filter(str.isalpha, ciphertext.upper()))
+    period_finder(ciphertext)
     iocs_plot()
 
     # Select and print a period (key length) number
