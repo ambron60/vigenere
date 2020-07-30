@@ -113,10 +113,12 @@ def main():
         ciphertext = ct.read()
     print(f'\nciphertext is {len(ciphertext)} characters long -> {sys.getsizeof(ciphertext)} bytes\n' )
     ciphertext = ''.join(filter(str.isalpha, ciphertext.upper()))
+    
+    # Approximate the period length via IoC
     period_finder(ciphertext)
     iocs_plot()
 
-    # Select and print a period (key length) number
+    # Key estimation routine given the period (key) length from previous step
     key_size = int(input("Enter the desired period (key size): "))
     for sequence in sequences[key_size]:
         sequence_shifter(sequence)
