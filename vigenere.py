@@ -61,28 +61,44 @@ def ic(sequence):
     if (denominator == 0.0):
         return 0.0
     else:
-        return numerator / ( denominator * (denominator - 1))
+        try:
+            ic = numerator / ( denominator * (denominator - 1))
+            return ic
+        except ZeroDivisionError:
+            return 0
 
 
-def iocs_plot():
+def ic_plot():
+    """Return a plot
+
+    This function build a plot of ICs to help determine
+    the period (or key size) by visual means.
+    """
     # Print bar plot with avg iocs
     plt.bar(iocs.keys(), iocs.values(), color='gray')
     plt.xticks(range(1, 31))
     plt.xlabel('Period/Key Size')
-    plt.ylabel('IoC Average')
+    plt.ylabel('I.C. Average')
     plt.title('Vigenere Cipher - Period (Key Size) Approximation')
     plt.show()
 
 
 def period_finder(cipher):
+    """Return (updates iocs in global dictionary)
+
+    Keyword arguments:
+    This function determines the period (key size) of the ciphertext
+    by extracting individual sequences based on assumed key lenghts starting at 1. 
+    An average I.C. is calculated for each sequence and the global iocs dict is updated.
+    """
     ics = []  # list of indices of coincidence to calculate averages
     period_sequences = []  # temporary storage list for every sequence under each key length
-    for i in range(1, 31):  # periods (key size) must be between 1 and 30
+    for i in range(1, 31):  # handles periods (key size) between 1 and 30
         for j in range(i):
             ciphertext = cipher[j:]
-            ics.append(ic(ciphertext[::i]))
+            ics.append(ic(ciphertext[::i]))  # Calculate IC for each individual sequence
             period_sequences.append(ciphertext[::i])
-        iocs.update( {i : round(mean(ics), 13)} )  # append iocs avg to global ioc dict
+        iocs.update({i : round(mean(ics), 13)})  # append iocs avg to global ioc dict
         ics.clear()
         sequences[i] = [sequence for sequence in period_sequences]
         period_sequences.clear()
@@ -116,7 +132,7 @@ def main():
     
     # Approximate the period length via IoC
     period_finder(ciphertext)
-    iocs_plot()
+    ic_plot()
 
     # Key estimation routine given the period (key) length from previous step
     key_size = int(input("Enter the desired period (key size): "))
